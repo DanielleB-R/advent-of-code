@@ -1,12 +1,9 @@
-use advent_of_code_2020::day3;
-use std::fs;
+use advent_of_code_2020::{self, day3};
 
 fn main() {
-    let forest: Vec<Vec<bool>> = fs::read_to_string("day3-input.dat")
-        .unwrap()
-        .lines()
-        .map(day3::parse_tree_line)
-        .collect();
+    let forest =
+        advent_of_code_2020::read_and_parse_from_file("day3-input.dat", day3::parse_tree_line)
+            .unwrap();
 
     let trees_part1 = day3::find_trees_hit(&forest, 3, 1);
 

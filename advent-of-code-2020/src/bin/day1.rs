@@ -1,7 +1,8 @@
 use advent_of_code_2020::*;
 
 fn main() {
-    let numbers = read_numbers_from_file("day1-input.dat").expect("problem with file");
+    let numbers = read_and_parse_from_file("day1-input.dat", |line| line.parse::<usize>().unwrap())
+        .expect("problem with file");
 
     let pair = day1::find_2020_sum(&numbers, 2);
     println!("{} * {} = {}", pair[0], pair[1], pair[0] * pair[1]);

@@ -4,10 +4,9 @@ pub mod day1;
 pub mod day2;
 pub mod day3;
 
-pub fn read_numbers_from_file(path: impl AsRef<path::Path>) -> io::Result<Vec<usize>> {
-    Ok(fs::read_to_string(path)?
-        .lines()
-        // TODO: yuck
-        .map(|line| line.parse().unwrap())
-        .collect())
+pub fn read_and_parse_from_file<T>(
+    path: impl AsRef<path::Path>,
+    line_parser: impl Fn(&str) -> T,
+) -> io::Result<Vec<T>> {
+    Ok(fs::read_to_string(path)?.lines().map(line_parser).collect())
 }
