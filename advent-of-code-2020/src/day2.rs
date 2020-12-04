@@ -40,7 +40,7 @@ impl PasswordRule {
     pub fn matches(&self, password: &str) -> bool {
         let count = password.chars().filter(|&c| c == self.letter).count();
 
-        count >= self.min && count <= self.max
+        (self.min..=self.max).contains(&count)
     }
 
     pub fn matches_new_logic(&self, password: &str) -> bool {
@@ -48,7 +48,7 @@ impl PasswordRule {
         let first_char = password.as_bytes()[self.min - 1] as char;
         let second_char = password.as_bytes()[self.max - 1] as char;
 
-        (first_char != second_char) && (first_char == self.letter || second_char == self.letter)
+        (first_char == self.letter) ^ (second_char == self.letter)
     }
 }
 

@@ -2,7 +2,7 @@ use custom_error::custom_error;
 use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
-use serde::Deserialize;
+use serde::{de::DeserializeOwned, Deserialize};
 use std::convert::{TryFrom, TryInto};
 
 pub fn make_json_strings(weirdo_input: &str) -> Vec<String> {
@@ -34,7 +34,7 @@ custom_error! {pub PassportParseError
 }
 
 fn check_range(value: usize, min: usize, max: usize) -> Result<(), PassportParseError> {
-    if (min..max + 1).contains(&value) {
+    if (min..=max).contains(&value) {
         Ok(())
     } else {
         Err(PassportParseError::OutOfRange)
@@ -42,7 +42,7 @@ fn check_range(value: usize, min: usize, max: usize) -> Result<(), PassportParse
 }
 
 #[derive(Debug, Deserialize)]
-struct PassportInfoRaw {
+pub struct PassportInfoRaw {
     byr: String,
     iyr: String,
     eyr: String,
@@ -209,7 +209,7 @@ impl TryFrom<String> for PassportID {
 }
 
 #[derive(Debug, Deserialize)]
-struct PassportInfo {
+pub struct PassportInfo {
     byr: BirthYear,
     iyr: IssueYear,
     eyr: ExpiryYear,
@@ -220,10 +220,10 @@ struct PassportInfo {
     cid: Option<String>,
 }
 
-pub fn good_passports_in(passport_json: &[String]) -> usize {
+pub fn good_passports_in<T: DeserializeOwned>(passport_json: &[String]) -> usize {
     passport_json
         .iter()
-        .map(|pp| serde_json::from_str::<PassportInfo>(pp))
+        .map(|pp| serde_json::from_str::<T>(pp))
         .filter(|parse_result| parse_result.is_ok())
         .count()
 }

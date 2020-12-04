@@ -3,7 +3,7 @@ use advent_of_code_2020::{self, day3};
 fn main() {
     let forest =
         advent_of_code_2020::read_and_parse_from_file("day3-input.dat", day3::parse_tree_line)
-            .unwrap();
+            .expect("file read problem");
 
     let trees_part1 = day3::find_trees_hit(&forest, 3, 1);
 
