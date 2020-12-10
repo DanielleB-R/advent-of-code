@@ -8,6 +8,7 @@ pub mod day5;
 pub mod day6;
 pub mod day7;
 pub mod day8;
+pub mod day9;
 
 pub fn read_and_parse_from_file<T>(
     path: impl AsRef<path::Path>,
