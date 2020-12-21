@@ -9,4 +9,8 @@ fn main() {
     let histo = day10::build_gap_histogram(&mut jolts);
 
     println!("part1 combination: {}", histo[&1] * histo[&3]);
+
+    let combinations = day10::possible_combinations(&jolts);
+
+    println!("number of combinations: {}", combinations);
 }
