@@ -1,11 +1,13 @@
+use itertools::Itertools;
 use lazy_static::lazy_static;
 use regex::Regex;
 use std::{collections::HashMap, str::FromStr};
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct Bitmask {
     zeros: usize,
     ones: usize,
+    floating_bits: Vec<usize>,
 }
 
 impl FromStr for Bitmask {
@@ -14,26 +16,44 @@ impl FromStr for Bitmask {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut zeros = 0;
         let mut ones = 0;
-        for c in s.chars() {
+        let mut floating_bits = vec![];
+
+        for (i, c) in s.chars().enumerate() {
             zeros <<= 1;
             ones <<= 1;
             match c {
                 '0' => zeros |= 1,
                 '1' => ones |= 1,
-                'X' => {}
+                'X' => floating_bits.push(35 - i),
                 _ => return Err("invalid char"),
             }
         }
         Ok(Self {
-            zeros: !zeros,
+            zeros,
             ones,
+            floating_bits,
         })
     }
 }
 
+fn evaluate_floating_bits<'a>(bit_indices: &'a [usize]) -> impl Iterator<Item = usize> + 'a {
+    bit_indices
+        .iter()
+        .map(|bit| [0, 1].iter().map(move |n| n << bit))
+        .multi_cartesian_product()
+        .map(|selections| selections.into_iter().fold(0, |acc, n| acc | n))
+}
+
 impl Bitmask {
     pub fn apply(&self, n: usize) -> usize {
-        n & self.zeros | self.ones
+        n & !self.zeros | self.ones
+    }
+
+    pub fn apply_with_floating(&self, n: usize) -> Vec<usize> {
+        let non_floating = n & self.zeros | self.ones;
+        evaluate_floating_bits(&self.floating_bits)
+            .map(move |bit_choice| non_floating | bit_choice)
+            .collect()
     }
 }
 
@@ -69,13 +89,39 @@ impl FromStr for Instruction {
 
 pub fn evaluate(instructions: &[Instruction]) -> usize {
     let mut memory = HashMap::new();
-    let mut mask = Bitmask { zeros: !0, ones: 0 };
+    let mut mask = Bitmask {
+        zeros: !0,
+        ones: 0,
+        floating_bits: vec![],
+    };
 
     for instruction in instructions {
         match instruction {
-            Instruction::Mask(new_mask) => mask = *new_mask,
+            Instruction::Mask(new_mask) => mask = new_mask.clone(),
             Instruction::Mem(addr, val) => {
                 memory.insert(addr, mask.apply(*val));
+            }
+        }
+    }
+
+    memory.values().sum()
+}
+
+pub fn evaluate_v2(instructions: &[Instruction]) -> usize {
+    let mut memory = HashMap::new();
+    let mut mask = Bitmask {
+        zeros: !0,
+        ones: 0,
+        floating_bits: vec![],
+    };
+
+    for instruction in instructions {
+        match instruction {
+            Instruction::Mask(new_mask) => mask = new_mask.clone(),
+            Instruction::Mem(base, val) => {
+                for addr in mask.apply_with_floating(*base) {
+                    memory.insert(addr, *val);
+                }
             }
         }
     }
@@ -96,5 +142,29 @@ mod test {
         assert_eq!(mask.apply(11), 73);
         assert_eq!(mask.apply(101), 101);
         assert_eq!(mask.apply(0), 64);
+    }
+
+    #[test]
+    fn test_floating_bits() {
+        let mask = "000000000000000000000000000000X1001X"
+            .parse::<Bitmask>()
+            .unwrap();
+
+        let mut results = mask.apply_with_floating(42);
+        results.sort();
+        assert_eq!(results, vec![26, 27, 58, 59]);
+    }
+
+    #[test]
+    fn test_v2_decoder() {
+        let instructions = "mask = 000000000000000000000000000000X1001X
+mem[42] = 100
+mask = 00000000000000000000000000000000X0XX
+mem[26] = 1"
+            .lines()
+            .map(|l| l.parse::<Instruction>().unwrap())
+            .collect_vec();
+
+        assert_eq!(evaluate_v2(&instructions), 208);
     }
 }

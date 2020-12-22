@@ -8,5 +8,9 @@ fn main() {
 
     let sum_values = day14::evaluate(&instructions);
 
-    println!("{}", sum_values)
+    println!("{}", sum_values);
+
+    let sum_values_v2 = day14::evaluate_v2(&instructions);
+
+    println!("{}", sum_values_v2);
 }
