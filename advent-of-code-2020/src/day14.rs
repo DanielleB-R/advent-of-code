@@ -37,7 +37,7 @@ impl Bitmask {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Instruction {
     Mask(Bitmask),
     Mem(usize, usize),

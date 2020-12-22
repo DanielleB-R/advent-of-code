@@ -1,5 +1,7 @@
 use std::str::FromStr;
 
+use serde::de::value::I32Deserializer;
+
 #[derive(Debug, Clone)]
 pub struct ScheduleNotes {
     earliest_time: usize,
@@ -46,7 +48,7 @@ impl ScheduleNotes {
 
 #[derive(Debug, Clone)]
 pub struct BusSequence {
-    buses: Vec<Option<usize>>,
+    buses: Vec<(usize, usize)>,
 }
 
 impl FromStr for BusSequence {
@@ -60,6 +62,8 @@ impl FromStr for BusSequence {
             .ok_or("should have a second line")?
             .split(',')
             .map(|piece| piece.parse().ok())
+            .enumerate()
+            .filter_map(|(n, o)| o.map(|bus| (n, bus)))
             .collect();
 
         Ok(Self { buses })
@@ -68,30 +72,34 @@ impl FromStr for BusSequence {
 
 impl BusSequence {
     pub fn find_time(&self) -> usize {
-        let (offset, max_bus) = self
-            .buses
-            .iter()
-            .map(|&o| o.unwrap_or_default())
-            .enumerate()
-            .max_by_key(|&(_, bus)| bus)
-            .expect("should have buses");
+        let mut increment = self.buses[0].1 as isize;
+        let mut offset = 0;
+        let mut first = 0;
 
+        for i in 2..=self.buses.len() {
+            first = Self::find_subset_time(&self.buses[0..i], increment, offset);
+            let second = Self::find_subset_time(&self.buses[0..i], increment, first);
+            increment = second - first;
+            offset = first - increment;
+        }
+        first as usize
+    }
+
+    fn find_subset_time(buses: &[(usize, usize)], increment: isize, offset: isize) -> isize {
         for iteration in 1.. {
-            let n = iteration * max_bus - offset;
+            let n = (iteration as isize) * increment + offset;
 
-            if self.evaluate_n(n) {
+            if Self::evaluate_n(buses, n as usize) {
                 return n;
             }
         }
         unreachable!();
     }
 
-    fn evaluate_n(&self, n: usize) -> bool {
-        for (i, bus) in self.buses.iter().enumerate() {
-            if let Some(bus_n) = bus {
-                if (n + i) % bus_n != 0 {
-                    return false;
-                }
+    fn evaluate_n(buses: &[(usize, usize)], n: usize) -> bool {
+        for (i, bus) in buses {
+            if (n + i) % bus != 0 {
+                return false;
             }
         }
         true
