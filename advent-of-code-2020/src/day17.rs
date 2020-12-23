@@ -24,12 +24,6 @@ pub trait Coordinate: Add<Output = Self> + Sized + Copy + Eq + Hash {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Coord3(isize, isize, isize);
 
-impl From<(isize, isize, isize)> for Coord3 {
-    fn from(input: (isize, isize, isize)) -> Self {
-        Self(input.0, input.1, input.2)
-    }
-}
-
 impl From<(usize, usize)> for Coord3 {
     fn from(input: (usize, usize)) -> Self {
         Self(input.0 as isize, input.1 as isize, 0)
@@ -67,7 +61,7 @@ impl Coordinate for Coord3 {
         (min.0..=max.0)
             .cartesian_product(min.1..=max.1)
             .cartesian_product(min.2..=max.2)
-            .map(|((x, y), z)| (x, y, z).into())
+            .map(|((x, y), z)| Self(x, y, z))
             .collect()
     }
 
@@ -75,6 +69,66 @@ impl Coordinate for Coord3 {
         Self::interior(Self::MINUS_ONE, Self::ONE)
             .into_iter()
             .filter(|&coord| coord != Coord3(0, 0, 0))
+            .collect()
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub struct Coord4(isize, isize, isize, isize);
+
+impl From<(usize, usize)> for Coord4 {
+    fn from(input: (usize, usize)) -> Self {
+        Self(input.0 as isize, input.1 as isize, 0, 0)
+    }
+}
+
+impl Add for Coord4 {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self(
+            self.0 + other.0,
+            self.1 + other.1,
+            self.2 + other.2,
+            self.3 + other.3,
+        )
+    }
+}
+
+impl Coordinate for Coord4 {
+    const ONE: Self = Coord4(1, 1, 1, 1);
+    const MINUS_ONE: Self = Coord4(-1, -1, -1, -1);
+
+    fn max(&self, other: Self) -> Self {
+        Self(
+            max(self.0, other.0),
+            max(self.1, other.1),
+            max(self.2, other.2),
+            max(self.3, other.3),
+        )
+    }
+    fn min(&self, other: Self) -> Self {
+        Self(
+            min(self.0, other.0),
+            min(self.1, other.1),
+            min(self.2, other.2),
+            min(self.3, other.3),
+        )
+    }
+
+    fn interior(min: Self, max: Self) -> Vec<Self> {
+        (min.0..=max.0)
+            .cartesian_product(min.1..=max.1)
+            .cartesian_product(min.2..=max.2)
+            .cartesian_product(min.3..=max.3)
+            .map(|(((x, y), z), w)| Self(x, y, z, w))
+            .collect()
+    }
+
+    fn neighbourhood() -> Vec<Self> {
+        Self::interior(Self::MINUS_ONE, Self::ONE)
+            .into_iter()
+            .filter(|&coord| coord != Coord4(0, 0, 0, 0))
             .collect()
     }
 }

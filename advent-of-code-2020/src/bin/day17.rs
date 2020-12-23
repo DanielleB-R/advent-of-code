@@ -10,5 +10,13 @@ fn main() {
         state3 = day17::iterate(state3);
     }
 
-    println!("active count: {}", state3.len());
+    println!("active count 3 dim: {}", state3.len());
+
+    let mut state4 = day17::parse_initial_active::<day17::Coord4>(&input);
+
+    for _ in 0..6 {
+        state4 = day17::iterate(state4);
+    }
+
+    println!("active count 4 dim: {}", state4.len());
 }
