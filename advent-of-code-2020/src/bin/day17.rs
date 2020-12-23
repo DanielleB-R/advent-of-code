@@ -4,11 +4,11 @@ use std::fs;
 fn main() {
     let input = fs::read_to_string("day17-input.dat").expect("file system error");
 
-    let mut state = day17::parse_initial_active(&input);
+    let mut state3 = day17::parse_initial_active::<day17::Coord3>(&input);
 
     for _ in 0..6 {
-        state = day17::iterate(state);
+        state3 = day17::iterate(state3);
     }
 
-    println!("active count: {}", state.len());
+    println!("active count: {}", state3.len());
 }
