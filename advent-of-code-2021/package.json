@@ -12,5 +12,8 @@
     "@tsconfig/node16": "^1.0.2",
     "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
+  },
+  "dependencies": {
+    "myzod": "^1.8.6"
   }
 }
