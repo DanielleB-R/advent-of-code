@@ -11,3 +11,5 @@ Cargo.lock
 
 *.dat
 *~
+input.txt
+node_modules
