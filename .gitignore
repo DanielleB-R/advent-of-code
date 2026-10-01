@@ -13,3 +13,5 @@ Cargo.lock
 *~
 input.txt
 node_modules
+build/
+\#*\#
