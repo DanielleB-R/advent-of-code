@@ -112,11 +112,7 @@ resolveSignals(signals);
 
 console.log(signals["a"]);
 
-console.log(signals["b"], signals2["b"]);
-
 signals2["b"] = signals["a"]!;
-
-console.log(signals["b"], signals2["b"], signals2["a"], signals2["lx"]);
 
 resolveSignals(signals2);
 
