@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const instructions = readFileSync('input.txt', 'utf8');
+const instructions = readFileSync("input.txt", "utf8");
 
 let floor = 0;
 for (const instruction of instructions) {

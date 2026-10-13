@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 
-const instructions = readFileSync('input.txt', 'utf8');
+const instructions = readFileSync("input.txt", "utf8");
 
 let floor = 0;
 let index = 1;
@@ -14,8 +14,8 @@ for (const instruction of instructions) {
   if (floor < 0) {
     break;
   }
-  
-  index +=1;
+
+  index += 1;
 }
 
 console.log(index);
