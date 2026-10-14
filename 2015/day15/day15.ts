@@ -37,43 +37,26 @@ let bestCalorieConstrainedScore = 0;
 for (let amount1 = 0; amount1 <= AMOUNT; amount1++) {
   for (let amount2 = 0; amount2 <= AMOUNT - amount1; amount2++) {
     for (let amount3 = 0; amount3 <= AMOUNT - amount1 - amount2; amount3++) {
-      for (
-        let amount4 = 0;
-        amount4 <= AMOUNT - amount1 - amount2 - amount3;
-        amount4++
-      ) {
-        const capacity = getScore(
-          "capacity",
-          amount1,
-          amount2,
-          amount3,
-          amount4,
-        );
-        const durability = getScore(
-          "durability",
-          amount1,
-          amount2,
-          amount3,
-          amount4,
-        );
-        const flavor = getScore("flavor", amount1, amount2, amount3, amount4);
-        const texture = getScore("texture", amount1, amount2, amount3, amount4);
-        const calories = getScore(
-          "calories",
-          amount1,
-          amount2,
-          amount3,
-          amount4,
-        );
+      const amount4 = AMOUNT - amount1 - amount2 - amount3;
+      const capacity = getScore("capacity", amount1, amount2, amount3, amount4);
+      const durability = getScore(
+        "durability",
+        amount1,
+        amount2,
+        amount3,
+        amount4,
+      );
+      const flavor = getScore("flavor", amount1, amount2, amount3, amount4);
+      const texture = getScore("texture", amount1, amount2, amount3, amount4);
+      const calories = getScore("calories", amount1, amount2, amount3, amount4);
 
-        const score = capacity * durability * flavor * texture;
-        if (score > bestScore) {
-          bestScore = score;
-        }
+      const score = capacity * durability * flavor * texture;
+      if (score > bestScore) {
+        bestScore = score;
+      }
 
-        if (calories === CALORIE_COUNT && score > bestCalorieConstrainedScore) {
-          bestCalorieConstrainedScore = score;
-        }
+      if (calories === CALORIE_COUNT && score > bestCalorieConstrainedScore) {
+        bestCalorieConstrainedScore = score;
       }
     }
   }
