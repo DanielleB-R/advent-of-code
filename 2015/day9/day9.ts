@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import {permutationsOf} from "../lib/permutations.js";
 
 const input = readFileSync("input.txt", "utf8").trim().split("\n");
 
@@ -32,28 +33,6 @@ const buildGraph = (legs: string[]): [Set<string>, Map<string, number>] => {
 };
 
 const [nodes, edges] = buildGraph(input);
-
-const permutationsOf = (keys: Set<string>): string[][] => {
-  if (keys.size === 0) {
-    return [];
-  }
-
-  if (keys.size === 1) {
-    return [Array.from(keys)];
-  }
-
-  const permutations = [];
-
-  for (const key of keys) {
-    const keyPermutations = permutationsOf(keys.difference(new Set([key])));
-
-    for (const keyPermutation of keyPermutations) {
-      permutations.push([key, ...keyPermutation]);
-    }
-  }
-
-  return permutations;
-};
 
 const nodePermutations = permutationsOf(nodes);
 
