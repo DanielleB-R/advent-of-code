@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import {permutationsOf} from "../lib/permutations.js";
+import { permutationsOf } from "../lib/permutations.js";
 
 const input = readFileSync("input.txt", "utf8").trim().split("\n");
 

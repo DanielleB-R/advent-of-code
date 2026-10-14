@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 
-export const readLines = <T>(regexp: RegExp, lineMapper: (match: RegExpExecArray) => T): T[] => {
+export const readLines = <T>(
+  regexp: RegExp,
+  lineMapper: (match: RegExpExecArray) => T,
+): T[] => {
   const input = readFileSync("input.txt", "utf8").trim().split("\n");
 
   const result: T[] = [];
@@ -14,6 +17,6 @@ export const readLines = <T>(regexp: RegExp, lineMapper: (match: RegExpExecArray
 
     result.push(lineMapper(match));
   }
-  
+
   return result;
-}
+};

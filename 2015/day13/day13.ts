@@ -34,7 +34,7 @@ const maxHappinessFor = (increments: Increments): number => {
     happiness += increments[seats[0]][seats[seats.length - 1]];
     return happiness;
   });
-  return permutationHappiness.reduce((max, val) => val > max ? val : max)
+  return permutationHappiness.reduce((max, val) => (val > max ? val : max));
 };
 
 console.log(maxHappinessFor(increments));
@@ -43,7 +43,8 @@ const ME = "Me";
 for (const person of Object.values(increments)) {
   person[ME] = 0;
 }
-increments[ME] = Object.fromEntries(Object.keys(increments).map((name) => [name, 0]));
+increments[ME] = Object.fromEntries(
+  Object.keys(increments).map((name) => [name, 0]),
+);
 
 console.log(maxHappinessFor(increments));
-
