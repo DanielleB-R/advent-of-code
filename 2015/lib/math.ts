@@ -1,5 +1,12 @@
-export const sum = (numbers: number[]): number => numbers.reduce((acc, val) => acc + val);
+interface NumericReducer {
+  reduce(callback: (acc: number, val: number) => number, init: number): number;
+}
 
-export const max = (numbers: number[]): number => numbers.reduce((acc, val) => val > acc ? val : acc, -Infinity);
+export const sum = (numbers: NumericReducer): number =>
+  numbers.reduce((acc, val) => acc + val, 0);
 
-export const min = (numbers: number[]): number => numbers.reduce((acc, val) => val < acc ? val : acc, Infinity);
+export const max = (numbers: NumericReducer): number =>
+  numbers.reduce((acc, val) => (val > acc ? val : acc), -Infinity);
+
+export const min = (numbers: NumericReducer): number =>
+  numbers.reduce((acc, val) => (val < acc ? val : acc), Infinity);

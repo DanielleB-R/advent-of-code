@@ -1,6 +1,16 @@
-import { readFileSync } from "node:fs";
+import { readLines } from "../lib/input.js";
+import { sum } from "../lib/math.js";
 
-const input = readFileSync("input.txt", "utf8").trim().split("\n");
+const commands = readLines(
+  /^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$/,
+  ([, operation, startX, startY, endX, endY]) => ({
+    operation,
+    start: [parseInt(startX, 10), parseInt(startY, 10)] as const,
+    end: [parseInt(endX, 10), parseInt(endY, 10)] as const,
+  }),
+);
+
+type Command = (typeof commands)[0];
 
 const HEIGHT = 1000;
 const WIDTH = 1000;
@@ -9,34 +19,24 @@ const index = (x: number, y: number) => x + WIDTH * y;
 
 type Alterations = Record<string, (x: number) => number>;
 
-const COMMAND_REGEX =
-  /^(turn on|turn off|toggle) (\d+),(\d+) through (\d+),(\d+)$/;
-
 const executeCommand = (
   lights: Uint8Array,
-  command: string,
+  command: Command,
   alterations: Alterations,
 ) => {
-  const match = COMMAND_REGEX.exec(command);
+  const operation = alterations[command.operation]!;
 
-  if (!match) {
-    throw new Error("Bad command ${command}");
-  }
+  let rowOrigin = index(command.start[0], command.start[1]);
 
-  const start_x = parseInt(match[2]!, 10);
-  const start_y = parseInt(match[3]!, 10);
+  const height = command.end[1] - command.start[1];
+  const width = command.end[0] - command.start[0];
 
-  const stop_x = parseInt(match[4]!, 10);
-  const stop_y = parseInt(match[5]!, 10);
-
-  const operation = alterations[match[1]!]!;
-  let row_origin = index(start_x, start_y);
-  for (let i = 0; i < stop_y - start_y + 1; i++) {
-    for (let j = 0; j < stop_x - start_x + 1; j++) {
-      const current = row_origin + j;
+  for (let i = 0; i <= height; i++) {
+    for (let j = 0; j <= width; j++) {
+      const current = rowOrigin + j;
       lights[current] = operation(lights[current]!);
     }
-    row_origin += WIDTH;
+    rowOrigin += WIDTH;
   }
 };
 
@@ -47,11 +47,10 @@ const BINARY_ALTERATION: Alterations = {
   toggle: (x) => x ^ 1,
 };
 
-for (const command of input) {
-  executeCommand(lights, command, BINARY_ALTERATION);
-}
-
-console.log(lights.reduce((sum, x) => sum + x, 0));
+commands.forEach((command) =>
+  executeCommand(lights, command, BINARY_ALTERATION),
+);
+console.log(sum(lights));
 
 const lights2 = new Uint8Array(HEIGHT * WIDTH);
 const SPECTRUM_ALTERATION: Alterations = {
@@ -60,8 +59,8 @@ const SPECTRUM_ALTERATION: Alterations = {
   toggle: (x) => x + 2,
 };
 
-for (const command of input) {
-  executeCommand(lights2, command, SPECTRUM_ALTERATION);
-}
+commands.forEach((command) =>
+  executeCommand(lights2, command, SPECTRUM_ALTERATION),
+);
 
-console.log(lights2.reduce((sum, x) => sum + x, 0));
+console.log(sum(lights2));
