@@ -1,14 +1,15 @@
 import { readFileSync } from "node:fs";
+import {sum} from "../lib/math.js";
 
 const instructions = readFileSync("input.txt", "utf8");
 
-let floor = 0;
-for (const instruction of instructions) {
-  if (instruction == "(") {
-    floor += 1;
-  } else {
-    floor -= 1;
-  }
-}
+const offset = (inst: string) => inst === '(' ? 1 : -1;
 
-console.log(floor);
+console.log(sum(Array.from(instructions).map(offset)));
+
+let floor = 0;
+
+console.log(Array.from(instructions).findIndex((inst) => {
+  floor += offset(inst);
+  return floor < 0;
+}))
