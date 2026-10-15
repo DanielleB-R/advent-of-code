@@ -1,27 +1,25 @@
-import { readFileSync } from "node:fs";
+import { readLines } from "../lib/input.js";
 import { permutationsOf } from "../lib/permutations.js";
+import { max, min } from "../lib/math.js";
 
-const input = readFileSync("input.txt", "utf8").trim().split("\n");
+const input = readLines(
+  /^(\w+) to (\w+) = (\d+)$/,
+  ([, from, to, distance]) => ({
+    from,
+    to,
+    distance: parseInt(distance, 10),
+  }),
+);
 
-const LINE_REGEX = /^(\w+) to (\w+) = (\d+)$/;
+type Leg = (typeof input)[0];
 
 const edgeKey = (from: string, to: string): string => `${from}-${to}`;
 
-const buildGraph = (legs: string[]): [Set<string>, Map<string, number>] => {
+const buildGraph = (legs: Leg[]): [Set<string>, Map<string, number>] => {
   const locations = new Set<string>();
   const distances = new Map<string, number>();
 
-  for (const leg of legs) {
-    const match = LINE_REGEX.exec(leg);
-
-    if (!match) {
-      throw new Error(`Malformed input: ${leg}`);
-    }
-
-    const from = match[1]!;
-    const to = match[2]!;
-    const distance = parseInt(match[3]!, 10);
-
+  for (const { from, to, distance } of legs) {
     locations.add(from);
     locations.add(to);
 
@@ -36,22 +34,13 @@ const [nodes, edges] = buildGraph(input);
 
 const nodePermutations = permutationsOf(nodes);
 
-let minDistance = 1e9;
-let maxDistance = 0;
-
-nodePermutations.forEach((route) => {
+const distances = nodePermutations.map((route) => {
   let distance = 0;
   for (let i = 0; i < route.length - 1; i++) {
     distance += edges.get(edgeKey(route[i]!, route[i + 1]!))!;
   }
-  if (distance < minDistance) {
-    minDistance = distance;
-  }
-  if (distance > maxDistance) {
-    maxDistance = distance;
-  }
+  return distance;
 });
 
-console.log(minDistance);
-
-console.log(maxDistance);
+console.log(min(distances));
+console.log(max(distances));

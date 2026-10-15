@@ -1,28 +1,18 @@
 import { readFileSync } from "node:fs";
-import { describe } from "node:test";
+import { sum } from "../lib/math.js";
 
 const input = readFileSync("input.txt", "utf8").trim().split("\n");
 
+const ESCAPE_MATCH_REGEX = /(\\x[a-fA-F\d]{2}|\\"|\\\\)/;
+
 const deEscape = (raw: string): string => {
-  return raw
-    .substring(1, raw.length - 1)
-    .replaceAll(/\\x[a-fA-F\d]{2}/g, "q")
-    .replaceAll('\\"', '"')
-    .replaceAll("\\\\", "\\");
+  return raw.substring(1, raw.length - 1).replaceAll(ESCAPE_MATCH_REGEX, "q");
 };
 
-const difference = input.reduce((sum, raw) => {
-  return sum + (raw.length - deEscape(raw).length);
-}, 0);
-
-console.log(difference);
+console.log(sum(input.map((raw) => raw.length - deEscape(raw).length)));
 
 const reEscape = (raw: string): string => {
   return `"${raw.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
 };
 
-const difference2 = input.reduce((sum, raw) => {
-  return sum + (reEscape(raw).length - raw.length);
-}, 0);
-
-console.log(difference2);
+console.log(sum(input.map((raw) => reEscape(raw).length - raw.length)));
