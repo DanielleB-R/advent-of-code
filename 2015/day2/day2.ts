@@ -1,21 +1,9 @@
-import { readFileSync } from "node:fs";
+import { readLines } from "../lib/input.js";
 
-const input = readFileSync("input.txt", "utf8").trim().split("\n");
-
-const PACKAGE_REGEX = /^(\d+)x(\d+)x(\d+)$/;
-
-const packages: [number, number, number][] = input.map((row) => {
-  const match = PACKAGE_REGEX.exec(row);
-  if (!match) {
-    throw new Error(`bad row ${row}`);
-  }
-
-  return [
-    parseInt(match[1]!, 10),
-    parseInt(match[2]!, 10),
-    parseInt(match[3]!, 10),
-  ];
-});
+const packages: [number, number, number][] = readLines(
+  /^(\d+)x(\d+)x(\d+)$/,
+  ([_, h, w, l]) => [parseInt(h, 10), parseInt(w, 10), parseInt(l, 10)],
+);
 
 const totalArea = packages.reduce((sum, [h, w, l]) => {
   const side1 = h * w;

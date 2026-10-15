@@ -6,9 +6,9 @@ const input = readFileSync("input.txt", "utf8").trim().split("\n");
 const deEscape = (raw: string): string => {
   return raw
     .substring(1, raw.length - 1)
-    .replaceAll("\\\\", "\\")
+    .replaceAll(/\\x[a-fA-F\d]{2}/g, "q")
     .replaceAll('\\"', '"')
-    .replaceAll(/\\x[a-fA-F\d]{2}/g, "q");
+    .replaceAll("\\\\", "\\");
 };
 
 const difference = input.reduce((sum, raw) => {
