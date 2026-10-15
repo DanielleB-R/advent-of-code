@@ -3,7 +3,7 @@ import { sum } from "../lib/math.js";
 
 const input = readFileSync("input.txt", "utf8").trim().split("\n");
 
-const ESCAPE_MATCH_REGEX = /(\\x[a-fA-F\d]{2}|\\"|\\\\)/;
+const ESCAPE_MATCH_REGEX = /(\\x[a-fA-F\d]{2}|\\"|\\\\)/g;
 
 const deEscape = (raw: string): string => {
   return raw.substring(1, raw.length - 1).replaceAll(ESCAPE_MATCH_REGEX, "q");
