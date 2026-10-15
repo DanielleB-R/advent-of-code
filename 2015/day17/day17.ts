@@ -1,5 +1,5 @@
-import {readLines} from "../lib/input.js";
-import {min} from "../lib/math.js";
+import { readLines } from "../lib/input.js";
+import { min } from "../lib/math.js";
 
 const containers = readLines(/^\d+$/, ([size]) => parseInt(size, 10));
 
@@ -10,14 +10,16 @@ const combinationsOf = (sizes: number[], remaining: number): number[][] => {
     return [[]];
   }
 
-  if (sizes.length === 0) {
+  if (sizes.length === 0 || remaining < 0) {
     return [];
   }
 
   let [head, ...rest] = sizes;
-  
-  return combinationsOf(rest, remaining - head).map((containers) => [head, ...containers]).concat(combinationsOf(rest, remaining));
-}
+
+  return combinationsOf(rest, remaining - head)
+    .map((containers) => [head, ...containers])
+    .concat(combinationsOf(rest, remaining));
+};
 
 const combinations = combinationsOf(containers, TOTAL_SIZE);
 
