@@ -1,0 +1,27 @@
+{
+  "playerHP": 50,
+  "playerMana": 500,
+  "missile": {
+    "cost": 53,
+    "damage": 4
+  },
+  "drain": {
+    "cost": 73,
+    "amount": 2
+  },
+  "poison": {
+    "cost": 173,
+    "damage": 3,
+    "turns": 6
+  },
+  "shield": {
+    "cost": 113,
+    "armour": 7,
+    "turns": 6
+  },
+  "recharge": {
+    "cost": 229,
+    "mana": 101,
+    "turns": 5
+  }
+}
