@@ -51,7 +51,7 @@ let rounds = 0;
 while (!results2.has("e")) {
         const possibilities = applyOneRound(results2, groupedReverse);
         const orderedPossibilities = Array.from(possibilities).sort((a, b) => a.length - b.length);
-        results2 = new Set(orderedPossibilities.slice(0, 50));
+        results2 = new Set(orderedPossibilities.slice(0, 1));
         rounds += 1;
 }
 
